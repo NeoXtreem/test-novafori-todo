@@ -10,6 +10,7 @@ interface ITodo {
 const Todos: React.FC = () => {
   const [todos, setTodos] = useState<ITodo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [newTodo, setNewTodo] = useState<string>('');
 
   useEffect(() => {
     const initialize = async () => {
@@ -18,6 +19,21 @@ const Todos: React.FC = () => {
     }
     initialize();
   }, []);
+
+  const updateNewTodo = (e: any) => {
+    setNewTodo(e.target.value);
+  }
+
+  const addTodo = async (): Promise<void> => {
+    const todo = await (await fetch(`todos?description=${newTodo}`, {
+      method: 'POST',
+      //headers: { 'Content-Type': 'application/json' },
+      //body: JSON.stringify({ description: newTodo })
+    })).json();
+
+    todos.push(todo);
+    setTodos([...todos]);
+  }
 
   const renderTodosTable = (todos: ITodo[]) => {
     const [completed, pending] = partition(todos, (v: ITodo) => v.completed);
@@ -59,9 +75,15 @@ const Todos: React.FC = () => {
   }
 
   const contents = loading ? <p><em>Loading...</em></p> : renderTodosTable(todos);
+  const style = { padding: 5 };
 
   return (
     <div>
+      <div>
+        <label style={style} htmlFor="endDate">New To-do:</label>
+        <input type="text" id="endDate" value={newTodo} onChange={updateNewTodo} />
+        <button type="button" disabled={newTodo.length === 0} onClick={addTodo}>Add To-do</button>
+      </div>
       <h1>To-dos</h1>
       {contents}
     </div>

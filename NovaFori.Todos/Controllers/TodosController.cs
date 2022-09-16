@@ -10,14 +10,11 @@ public class TodosController : ControllerBase
 {
     private readonly TodosService _todosService;
 
-    public TodosController(TodosService todosService)
-    {
-        _todosService = todosService;
-    }
+    public TodosController(TodosService todosService) => _todosService = todosService;
 
     [HttpGet]
     public IEnumerable<Todo> Get() => _todosService.GetAllTodos();
 
     [HttpPost]
-    public void Post([FromBody] Todo todo) => _todosService.Add(todo);
+    public async Task<Todo> Post([FromQuery] string description) => await _todosService.AddNewTodo(description);
 }
