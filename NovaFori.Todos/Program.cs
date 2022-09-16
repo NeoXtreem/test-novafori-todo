@@ -1,5 +1,6 @@
-using NovaFori.Todos.Data;
 using Microsoft.EntityFrameworkCore;
+using NovaFori.Todos.Data;
+using NovaFori.Todos.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,7 @@ var dbPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Local
 builder
     .Services.AddControllersWithViews()
     .Services.AddDbContext<TodosContext>(options => options.UseSqlite($"Data Source={dbPath}"))
-    .AddScoped<TodoRepository>();
+    .AddScoped<TodosService>();
 
 var app = builder.Build();
 

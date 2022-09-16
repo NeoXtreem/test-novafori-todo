@@ -24,8 +24,8 @@ const Todos: React.FC = () => {
 
     return (
       <div>
-        <h2>Pending</h2>
-        <table className='table table-striped' aria-labelledby="tabelLabel">
+        <h2 id="pendingHeader">Pending</h2>
+        <table className='table table-striped' aria-labelledby="pendingHeader">
           <thead>
             <tr>
               <th>Description</th>
@@ -39,8 +39,8 @@ const Todos: React.FC = () => {
             )}
           </tbody>
         </table>
-        <h2>Completed</h2>
-        <table className='table table-striped' aria-labelledby="tabelLabel">
+        <h2 id="completedHeader">Completed</h2>
+        <table className='table table-striped' aria-labelledby="completedHeader">
           <thead>
             <tr>
               <th>Description</th>
@@ -62,7 +62,7 @@ const Todos: React.FC = () => {
 
   return (
     <div>
-      <h1 id="tableLabel">To-dos</h1>
+      <h1>To-dos</h1>
       {contents}
     </div>
   );
