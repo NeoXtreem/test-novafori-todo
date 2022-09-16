@@ -12,10 +12,15 @@ const Todos: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [newTodo, setNewTodo] = useState<string>('');
 
+  const loadTodos = async (): Promise<void> => {
+    setLoading(true);
+    setTodos(await (await fetch('todos')).json());
+    setLoading(false);
+  }
+
   useEffect(() => {
     const initialize = async () => {
-      setTodos(await (await fetch('todos')).json());
-      setLoading(false);
+      await loadTodos();
     }
     initialize();
   }, []);
@@ -24,12 +29,13 @@ const Todos: React.FC = () => {
     setNewTodo(e.target.value);
   }
 
+  const toggleTodo = async (todoId: number, completed: boolean) => {
+    await fetch(`todos/${todoId}?completed=${completed}`, { method: 'PATCH' });
+    await loadTodos();
+  }
+
   const addTodo = async (): Promise<void> => {
-    const todo = await (await fetch(`todos?description=${newTodo}`, {
-      method: 'POST',
-      //headers: { 'Content-Type': 'application/json' },
-      //body: JSON.stringify({ description: newTodo })
-    })).json();
+    const todo = await (await fetch(`todos?description=${newTodo}`, { method: 'POST' })).json();
 
     todos.push(todo);
     setTodos([...todos]);
@@ -51,6 +57,7 @@ const Todos: React.FC = () => {
             {pending.map(todo =>
               <tr key={todo.id}>
                 <td>{todo.description}</td>
+                <td><button type="button" onClick={() => toggleTodo(todo.id, true)}>✅</button></td>
               </tr>
             )}
           </tbody>
@@ -66,6 +73,7 @@ const Todos: React.FC = () => {
             {completed.map(todo =>
               <tr key={todo.id}>
                 <td>{todo.description}</td>
+                <td><button type="button" onClick={() => toggleTodo(todo.id, false)}>❌</button></td>
               </tr>
             )}
           </tbody>
@@ -82,7 +90,7 @@ const Todos: React.FC = () => {
       <div>
         <label style={style} htmlFor="endDate">New To-do:</label>
         <input type="text" id="endDate" value={newTodo} onChange={updateNewTodo} />
-        <button type="button" disabled={newTodo.length === 0} onClick={addTodo}>Add To-do</button>
+        <button type="button" disabled={newTodo.length === 0} onClick={addTodo}>Add</button>
       </div>
       <h1>To-dos</h1>
       {contents}

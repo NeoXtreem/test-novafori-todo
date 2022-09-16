@@ -17,4 +17,7 @@ public class TodosController : ControllerBase
 
     [HttpPost]
     public async Task<Todo> Post([FromQuery] string description) => await _todosService.AddNewTodo(description);
+
+    [HttpPatch("{id}")]
+    public async Task<Todo> Patch([FromRoute] int id, [FromQuery] bool completed) => await _todosService.SetTodo(id, completed);
 }

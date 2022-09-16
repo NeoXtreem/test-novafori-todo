@@ -45,7 +45,7 @@ namespace NovaFori.Todos.Test
         }
 
         [TestMethod]
-        public async Task AddingTodoShouldReturnOneAdditionalTodo()
+        public async Task AddingTodoShouldSaveOneToTheDatabase()
         {
             // Arrange
             var data = _fixture.CreateMany<Todo>().AsQueryable();
@@ -59,6 +59,26 @@ namespace NovaFori.Todos.Test
 
             // Assert
             mockSet.Verify(m => m.Add(It.IsAny<Todo>()), Times.Once());
+            mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
+        }
+
+        [TestMethod]
+        public async Task ChangingTodoShouldUpdateOneInTheDatabase()
+        {
+            // Arrange
+            var data = _fixture.CreateMany<Todo>().AsQueryable();
+            var mockSet = GetMockSet(data);
+            var mockContext = GetMockContext(mockSet);
+            var description = _fixture.Create<string>();
+            mockSet.Setup(m => m.Update(It.IsAny<Todo>())).Returns(GetMockEntityEntry().Object);
+
+            // Action
+            var sut = GetSut(mockContext);
+            var todo = sut.Get().First();
+            await sut.Patch(todo.Id, true);
+
+            // Assert
+            mockSet.Verify(m => m.Update(It.IsAny<Todo>()), Times.Once());
             mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
         }
 
